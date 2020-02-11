@@ -4,9 +4,9 @@ const Course = require('../models/Course');
 
 
 //show all courses
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
     try {
-        const courses = await Course.find();
+        const courses = Course.find();
         res.json(courses)
     }
     catch (err) {
@@ -15,12 +15,12 @@ router.get('/', async (req, res) => {
 });
 
 //create course
-router.post('/', async (req, res) =>{
+router.post('/', async(req, res) =>{
     const course = new Course({
         title: req.body.title,
         description: req.body.description
     })
-    console.log(req.body)
+    console.log(course)
     try {
         const savedCourse = await course.save();
         res.json(savedCourse);

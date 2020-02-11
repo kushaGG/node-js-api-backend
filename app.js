@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const coursesRoute = require('./routes/courses');
+const lessonsRoute = require('./routes/lessons');
 
 require('dotenv/config');
 
@@ -13,6 +14,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/courses', coursesRoute);
+app.use('/', lessonsRoute);
 
 //db connect
 mongoose.connect(
@@ -21,6 +23,12 @@ mongoose.connect(
       useUnifiedTopology: true},
     () => console.log('connected to mongoDB')
 );
+// mongoose.connect(
+//       'mongodb://localhost/test', 
+//       { useNewUrlParser: true, 
+//         useUnifiedTopology: true }, () => 
+//       console.log('connect to local mongoose')
+// );
 
 app.listen(3000);
 
