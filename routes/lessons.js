@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Lesson = require('../models/Lesson');
+const Course = require('../models/Course');
+const verify = require('./verifyToken');
 
 router.get('/course/:courseId/lessons', async (req, res) => {
     try {
@@ -12,9 +14,10 @@ router.get('/course/:courseId/lessons', async (req, res) => {
     }   
 });
 
-//create course
-router.post('/course/:courseId/lessons', async (req, res) => {
+//create lesson
+router.post('/course/:courseId/lessons', verify, async (req, res) => {
     const lesson = new Lesson({
+        user: req.user._id,
         course: req.params.courseId,
         title: req.body.title,
         description: req.body.description
@@ -28,7 +31,7 @@ router.post('/course/:courseId/lessons', async (req, res) => {
     }
 })
 
-//show course by id
+//show lesson by id
 router.get('/course/:courseId/lesson/:lessonId', async (req, res) => {
     try {
         const lesson = await Lesson.findById(req.params.lessonId);
@@ -39,34 +42,48 @@ router.get('/course/:courseId/lesson/:lessonId', async (req, res) => {
     }
 })
 
-//delete course
-router.delete('/course/:courseId/lesson/:lessonId', async (req, res) => {
-    try {
-        const removeLesson = await Lesson.remove({ _id: req.params.lessonId })
-        res.json(removeLesson);
+//delete lesson
+router.delete('/course/:courseId/lesson/:lessonId', verify, async (req, res) => {
+    const lesson = await Lesson.findOne({ _id: req.params.lessonId })
+    const course = await Course.findOne({ _id: req.params.courseId })
+
+    if (req.user._id == lesson.user && req.user._id == course.user){
+        try {
+            const removeLesson = await Lesson.remove({ _id: req.params.lessonId })
+            res.json(removeLesson);
+        }
+        catch (err) {
+            res.json({ message: err })
+        }
     }
-    catch (err) {
-        res.json({ message: err })
-    }
+    else res.json('Access denied')
+    
 })
 
-//update course
-router.patch('/course/:courseId/lesson/:lessonId', async (req, res) => {
-    try {
-        const updatedLesson = await Lesson.updateOne(
-            { _id: req.params.lessonId },
-            {
-                $set: {
-                    title: req.body.title,
-                    description: req.body.description
+//update lesson
+router.patch('/course/:courseId/lesson/:lessonId', verify, async (req, res) => {
+    const lesson = await Lesson.findOne({ _id: req.params.lessonId })
+    const course = await Course.findOne({ _id: req.params.courseId })
+
+    if (req.user._id == lesson.user && req.user._id == course.user){
+        try {
+            const updatedLesson = await Lesson.updateOne(
+                { _id: req.params.lessonId },
+                {
+                    $set: {
+                        title: req.body.title,
+                        description: req.body.description
+                    }
                 }
-            }
-        )
-        res.json(updatedLesson)
+            )
+            res.json(updatedLesson)
+        }
+        catch (err) {
+            res.json({ message: err })
+        }
     }
-    catch (err) {
-        res.json({ message: err })
-    }
+    else res.json('Access denied')
+    
 })
 
 module.exports = router;
