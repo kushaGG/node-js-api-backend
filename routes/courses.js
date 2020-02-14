@@ -6,19 +6,19 @@ const querymen = require('querymen');
 
 
 //show all courses
-router.get('/', querymen.middleware(), async function(req, res) {
+router.get('/', querymen.middleware(), async function(req, res, next) {
     try {
         var query = req.querymen;
         const courses = await Course.find(query.query, query.select, query.cursor);
         return res.json(courses)
     }
     catch (err) {
-        res.json({ message: err })
+        next(err);
     }
 });
 
 //create course
-router.post('/', verify, async function(req, res) {  
+router.post('/', verify, async function(req, res, next) {  
     const course = new Course({
         user: req.user._id,
         title: req.body.title,
@@ -29,23 +29,23 @@ router.post('/', verify, async function(req, res) {
         const savedCourse = await course.save();
         res.json(savedCourse);
     } catch (err) {
-        res.json({message:err})
+        next(err);
     }
 })
 
 //show course by id
-router.get('/:courseId', async (req, res) =>{
+router.get('/:courseId', async function(req, res, next) {
     try {
         const course = await Course.findById(req.params.courseId);
         res.json(course)
     }
     catch (err) {
-        res.json({ message: err })
+        next(err);
     }
 })
 
 //delete course
-router.delete('/:courseId', verify, async (req, res) => {
+router.delete('/:courseId', verify, async function(req, res, next) {
     try {
         const course = await Course.findOne({ _id: req.params.courseId })
 
@@ -56,13 +56,13 @@ router.delete('/:courseId', verify, async (req, res) => {
         else res.json('Access denied')
     }
     catch (err) {
-        res.json({ message: err })
+        next(err);
     }
         
 })
 
 //update course
-router.patch('/:courseId', verify, async (req, res) => {
+router.patch('/:courseId', verify, async function(req, res, next) {
     try {
         const course = await Course.findOne({ _id: req.params.courseId })
 
@@ -77,7 +77,7 @@ router.patch('/:courseId', verify, async (req, res) => {
         else res.json('Access denied')
     }
     catch (err) {
-        res.json({ message: err })
+        next(err);
     }
 })
 

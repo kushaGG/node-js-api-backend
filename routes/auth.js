@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { regValidation } = require('../validates');
 
-router.post('/register', async (req, res) => {
+router.post('/register', async function(req, res, next) {
     const { error } = regValidation(req.body);
     if(error) return res.status(400).json(error.details[0].message);
 
@@ -25,20 +25,26 @@ router.post('/register', async (req, res) => {
         res.json(userSaved);
     }
     catch (err) {
-        res.json({ message: err.message })
+        // res.json({ message: err.message })
+        next(err);
     }
 });
 
-router.post('/login', async function(req, res) {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) return res.status(400).json('Email is not found');
-
-    const validPass = await bcrypt.compare( req.body.password, user.password );
-    if (!validPass) return res.status(400).json('Passord is wrong');
-
-    const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-
-    res.header('auth-token', token).json(token);
+router.post('/login', async function(req, res, next) {
+    try{
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) return res.status(400).json('Email is not found');
+    
+        const validPass = await bcrypt.compare( req.body.password, user.password );
+        if (!validPass) return res.status(400).json('Passord is wrong');
+    
+        const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+    
+        res.header('auth-token', token).json(token);
+    }
+    catch (err) {
+        next(err);
+    }
 })
 
 

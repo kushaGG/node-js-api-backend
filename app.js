@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const paginate = require('express-paginate')
 
 //config routes
 const coursesRoute = require('./routes/courses');
@@ -12,7 +11,6 @@ const authRoutes = require('./routes/auth');
 require('dotenv/config');
 
 app.use(bodyParser.json());
-app.use(paginate.middleware(10, 50));
 
 app.use('/courses', coursesRoute);
 app.use('/', lessonsRoute);
@@ -21,29 +19,16 @@ app.get('/', (req, res) =>{
   res.json('home page')
 })
 
+
 //express midlleware error handle
 app.use(function(req, res){
   res.status(404).json('Page not found')
 })
 
-app.use(function handleAssertionError(err, req, res, next) {
-  if (err instanceof AssertionError) {
-    return res.status(400).json({
-      type: 'AssertionError',
-      message: err.message
-    });
-  }
-  next(err);
-});
-
-app.use(function handleDatabaseError(err, req, res, next) {
-  if (err instanceof MongoError) {
-    return res.status(503).json({
-      type: 'MongoError',
-      message: err.message
-    });
-  }
-  next(err);
+app.use(function(err, req, res, next) {
+  console.error(err.message);
+  if (!err.statusCode) err.statusCode = 500;
+  res.status(err.statusCode).json({error: err.message});
 });
 //express midlleware error handle
 

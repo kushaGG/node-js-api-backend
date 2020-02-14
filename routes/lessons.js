@@ -5,19 +5,19 @@ const Course = require('../models/Course');
 const verify = require('./verifyToken');
 const querymen = require('querymen');
 
-router.get('/course/:courseId/lessons', querymen.middleware(), async function(req, res) {
+router.get('/course/:courseId/lessons', querymen.middleware(), async function(req, res, next) {
     try {
         var query = req.querymen;
         const lessons = await Lesson.find( query.query , query.select ,query.cursor).where({ course: { $eq: req.params.courseId } } )
         res.json(lessons)
     }
     catch (err) {
-        res.json({ message: err })
+        next(err);
     }   
 });
 
 //create lesson
-router.post('/course/:courseId/lessons', verify, async (req, res) => {
+router.post('/course/:courseId/lessons', verify, async function(req, res, next) {
     const lesson = new Lesson({
         user: req.user._id,
         course: req.params.courseId,
@@ -29,23 +29,23 @@ router.post('/course/:courseId/lessons', verify, async (req, res) => {
         const savedLesson = await lesson.save();
         res.json(savedLesson);
     } catch (err) {
-        res.json({ message: err })
+        next(err);
     }
 })
 
 //show lesson by id
-router.get('/course/:courseId/lesson/:lessonId', async (req, res) => {
+router.get('/course/:courseId/lesson/:lessonId', async function(req, res, next) {
     try {
         const lesson = await Lesson.findById(req.params.lessonId);
         res.json(lesson)
     }
     catch (err) {
-        res.json({ message: err })
+        next(err)
     }
 })
 
 //delete lesson
-router.delete('/course/:courseId/lesson/:lessonId', verify, async (req, res) => {
+router.delete('/course/:courseId/lesson/:lessonId', verify, async function(req, res, next) {
     
     try {
         const lesson = await Lesson.findOne({ _id: req.params.lessonId })
@@ -58,12 +58,12 @@ router.delete('/course/:courseId/lesson/:lessonId', verify, async (req, res) => 
         else res.json('Access denied')
     }
     catch (err) {
-        res.json({ message: err })
+        next(err)
     } 
 })
 
 //update lesson
-router.patch('/course/:courseId/lesson/:lessonId', verify, async (req, res) => {
+router.patch('/course/:courseId/lesson/:lessonId', verify, async function(req, res, next) {
     try {
         const lesson = await Lesson.findOne({ _id: req.params.lessonId })
         const course = await Course.findOne({ _id: req.params.courseId })
@@ -83,7 +83,7 @@ router.patch('/course/:courseId/lesson/:lessonId', verify, async (req, res) => {
         else res.json('Access denied')        
     }
     catch (err) {
-        res.json({ message: err })
+        next(err);
     }
 })
 
