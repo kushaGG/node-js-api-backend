@@ -5,21 +5,20 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js",
-    "docs": "apidoc -i routers -o docs && apidoc-markdown -p docs -o DOCS.md"
+    "start": "nodemon app.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@hapi/joi": "^17.1.0",
-    "apidoc": "^0.20.0",
-    "apidoc-markdown": "^0.2.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-paginate": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.8.11",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "querymen": "^2.1.3"
   }
 }
