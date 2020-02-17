@@ -1,2 +1,5 @@
 Docs: 
-    https://documenter.getpostman.com/view/10128239/SzKPV1x1?version=latest
+    https://gentle-cove-75304.herokuapp.com/api-docs
+
+Heroku link:
+    https://gentle-cove-75304.herokuapp.com/
