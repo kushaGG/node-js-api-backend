@@ -63,7 +63,7 @@ router.delete('/course/:courseId/lesson/:lessonId', verify, async function(req, 
 })
 
 //update lesson
-router.patch('/course/:courseId/lesson/:lessonId', verify, async function(req, res, next) {
+router.put('/course/:courseId/lesson/:lessonId', verify, async function(req, res, next) {
     try {
         const lesson = await Lesson.findOne({ _id: req.params.lessonId })
         const course = await Course.findOne({ _id: req.params.courseId })

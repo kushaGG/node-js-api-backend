@@ -1,0 +1,809 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Node.js API 1.0",
+    "version": "1.0.0",
+    "description": "CRUD API"
+  },
+  "servers": [
+    {
+      "url": "http://0.0.0.0:3000"
+    }
+  ],
+  "paths": {
+    "/user/register": {
+      "post": {
+        "description": "register user",
+        "tags": [ "Authorization" ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSchema"
+              },
+              "example": {
+                "email": "boy@gmail.com",
+                "username": "togo",
+                "password": "togoboy"
+              }
+            }
+          }
+        },
+        "responses":{
+          "200":{
+            "description": "user registered",
+            "content": {
+              "application/json": {
+                "example": {
+                  "_id": "5e4aa6c921179544bff055f6",
+                  "username": "togo",
+                  "email": "boy@gmail.com",
+                  "password": "$2a$10$2OsXzFe2F0Hucu1b9x4B3OO0x9KrQILS5sePQ.jGLgg2g5j9Qa4pa",
+                  "date": "2020-02-17T14:44:25.133Z",
+                  "__v": 0
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "duplicate",
+            "content": {
+              "application/json":{
+                "example": {
+                  "error": "E11000 duplicate key error collection: test.users index: email_1 dup key: { email: \"boy13@gmail.com\" }"
+              }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "description": "login user",
+        "tags": [ "Authorization" ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUserSchema"
+              },
+              "example": {
+                "email": "boy@gmail.com",
+                "password": "togoboy"
+              }
+            }
+          }
+        },
+        "responses":{
+          "200":{
+            "description": "logged",
+            "content": {
+              "application/json": {
+                "example": [
+                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTQ1NTQzMWUyZGVjMjQ2NzZiNDcxZGQiLCJpYXQiOjE1ODE5NTEwMTl9.gq_4n_-f9JuXJ1wfJkEWQ9WilXfw2Y7FPvX6y8TzJtg"
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "not found",
+            "content": {
+              "application/json":{
+                "example": {
+                  "error": "Email is not found"
+              }
+              }
+            }
+          }      
+        } 
+      }
+    },
+    "/courses": {
+      "get": {
+        "description": "Get all coures. Available data formats for page and limit(courses per page) Filters.",
+        "tags": [
+          "Course"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "get courses from {?} page"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "get courses with limit per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "courses successfully obtained",
+            "content": {
+              "appication/json": {
+                "example": {
+                  "count": 3,
+                  "rows": [
+                    {
+                      "id": "5e42b9af5860c94919c4844b",
+                      "title": "title-test",
+                      "description": "description-test",
+                      "date": "2020-02-11T14:26:55.326Z",
+                      "__v": 0
+                  },
+                  {
+                      "id": "5e42cfeb0b299b5c2d30510a",
+                      "title": "title-test2",
+                      "description": "description-test2",
+                      "date": "2020-02-11T16:01:47.218Z",
+                      "__v": 0
+                  },
+                  {
+                      "id": "5e455aaa9227605150d7dcc2",
+                      "title": "verify test",
+                      "description": "verify test",
+                      "date": "2020-02-13T14:18:18.193Z",
+                      "__v": 0
+                  }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "create course",
+        "tags": [ "Course" ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseSchema"
+              },
+              "example": {
+                "title": "title-example",
+                "description": "description-example"
+              }
+            }
+          }
+        },
+        "responses":{
+          "200":{
+            "description": "course created",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "5de8de38e3bfab0b8f57b977",
+                  "title": "title-example",
+                  "description": "description-example",
+                  "date":"2020-02-11T14:26:55.326Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json":{
+                "example": {
+                  "error": "Access Denied"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/{_id}": {
+      "get": {
+        "description": "get course by id",
+        "tags": [ "Course" ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "the unique course _id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "course successfully loaded",
+            "content": {
+              "appication/json": {
+                "example": {
+                  "id": "5e42b9af5860c94919c4844b",
+                  "title": "title-test",
+                  "description": "description-test",
+                  "date": "2020-02-11T14:26:55.326Z",
+                  "__v": 0
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": []
+          }
+        }
+      },
+      "put": {
+        "description": "update course by id",
+        "tags": [ "Course" ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "the unique course _id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseSchema"
+              },
+              "example": {
+                "title": "title-update-example",
+                "description": "description-update-example"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "course successfully update",
+            "content": {
+              "appication/json": {
+                "example": {
+                  "n": 1,
+                  "nModified": 0,
+                  "opTime": {
+                      "ts": "6794406879498862593",
+                      "t": 2
+                  },
+                  "electionId": "7fffffff0000000000000002",
+                  "ok": 1,
+                  "$clusterTime": {
+                      "clusterTime": "6794406879498862593",
+                      "signature": {
+                          "hash": "mwJco356rl85LM+W20T9Qt8iFGo=",
+                          "keyId": "6791993889562558467"
+                      }
+                  },
+                  "operationTime": "6794406879498862593"
+                }
+              }
+            }
+          },
+          "401":{
+            "description": "Unauthorized",
+            "content": {
+              "application/json":{
+                "example": {
+                  "error":"Access Denied"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": []
+          }
+        }
+      },
+      "delete": {
+        "description": "delete course by id",
+        "tags": [ "Course" ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "the unique course _id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "course successfully update",
+            "content": {
+              "appication/json": {
+                "example": {
+                  "n": 1,
+                  "opTime": {
+                      "ts": "6794408434277023745",
+                      "t": 2
+                  },
+                  "electionId": "7fffffff0000000000000002",
+                  "ok": 1,
+                  "$clusterTime": {
+                      "clusterTime": "6794408434277023745",
+                      "signature": {
+                          "hash": "ZAw7d4dQYDIHWXnU2u61uO4zYug=",
+                          "keyId": "6791993889562558467"
+                      }
+                  },
+                  "operationTime": "6794408434277023745",
+                  "deletedCount": 1
+                }
+              }
+            }
+          },
+          "401":{
+            "description": "Unauthorized",
+            "content": {
+              "application/json":{
+                "example": {
+                  "error":"Access Denied"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": []
+          }
+        }
+      }
+    },
+    "/course/{:CourseId}/lessons": {
+      "post": {
+        "description": "create lesson for course{_id}",
+        "tags": [ "Lessons" ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": ":CourseId",
+            "description": "the unique course _id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LessonSchema"
+              },
+              "example": {
+                "title": "lesson-title-example",
+                "description": "lesson-description-example"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "lesson successfully created",
+            "content": {
+              "appication/json": {
+                "example": {
+                  "_id": "5e4a9b1bc2348d307c798b10",
+                  "user": "5e455431e2dec24676b471dd",
+                  "course": "5e4662928048b315c963856c",
+                  "title": "lesson-title-example",
+                  "description": "lesson-description-example",
+                  "date": "2020-02-17T13:54:35.451Z",
+                  "__v": 0
+                }
+              }
+            }
+          },
+          "401":{
+            "description": "Unauthorized",
+            "content": {
+              "application/json":{
+                "example": {
+                  "error":"Access Denied"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": []
+          }
+        }
+      },
+      "get": {
+        "description": "show lessons from course{:CourseId}, with params: page and limit(lessons per page)",
+        "tags": [ "Lessons" ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "get lessons from {?} page"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "get lessons with limit per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "lessons successfully obtained",
+            "content": {
+              "appication/json": {
+                "example": {
+                  "count": 3,
+                  "rows": [
+                    {
+                      "id": "5e42b9af5860c94919c4844b",
+                      "user": "5e455431e2dec24676b471dd",
+                      "course": "5e4662928048b315c963856c",
+                      "title": "title-test",
+                      "description": "description-test",
+                      "date": "2020-02-11T14:26:55.326Z",
+                      "__v": 0
+                  },
+                  {
+                      "id": "5e42cfeb0b299b5c2d30510a",
+                      "user": "5e455431e2dec24676b471dd",
+                      "course": "5e4662928048b315c963856c",
+                      "title": "title-test2",
+                      "description": "description-test2",
+                      "date": "2020-02-11T16:01:47.218Z",
+                      "__v": 0
+                  },
+                  {
+                      "id": "5e455aaa9227605150d7dcc2",
+                      "user": "5e455431e2dec24676b471dd",
+                      "course": "5e4662928048b315c963856c",
+                      "title": "verify test",
+                      "description": "verify test",
+                      "date": "2020-02-13T14:18:18.193Z",
+                      "__v": 0
+                  }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": []
+          }
+        }
+      }
+    },
+    "/course/{:CourseId}/lesson/{:LessonId)": {
+      "get": {
+        "description": "show course{:CourseId} lesson by id",
+        "tags": [ "Lessons" ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": ":CourseId",
+            "description": "the unique course _id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": ":LessonId",
+            "description": "the unique lesson _id",
+            "required": true,
+            "schema":{
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "lessons successfully loaded",
+            "content": {
+              "appication/json": {
+                "example": {
+                  "id": "5e42b9af5860c94919c4844b",
+                  "user": "5e455431e2dec24676b471dd",
+                  "course": "5e4662928048b315c963856c",
+                  "title": "title-test",
+                  "description": "description-test",
+                  "date": "2020-02-11T14:26:55.326Z",
+                  "__v": 0
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": []
+          }
+        }
+      },
+      "put": {
+        "description": "update lesson by id, and course_id",
+        "tags": [ "Lessons" ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": ":CourseId",
+            "description": "the unique course _id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": ":LessonId",
+            "description": "the unique lesson _id",
+            "required": true,
+            "schema":{
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LessonSchema"
+              },
+              "example": {
+                "title": "lesson-title-update-example",
+                "description": "lesson-description-update-example"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "lesson successfully update",
+            "content": {
+              "appication/json": {
+                "example": {
+                  "n": 1,
+                  "nModified": 0,
+                  "opTime": {
+                      "ts": "6794406879498862593",
+                      "t": 2
+                  },
+                  "electionId": "7fffffff0000000000000002",
+                  "ok": 1,
+                  "$clusterTime": {
+                      "clusterTime": "6794406879498862593",
+                      "signature": {
+                          "hash": "mwJco356rl85LM+W20T9Qt8iFGo=",
+                          "keyId": "6791993889562558467"
+                      }
+                  },
+                  "operationTime": "6794406879498862593"
+                }
+              }
+            }
+          },
+          "401":{
+            "description": "Unauthorized",
+            "content": {
+              "application/json":{
+                "example": {
+                  "error":"Access Denied"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": []
+          }
+        }
+      },
+      "delete": {
+        "description": "delete lesson by id and course_id",
+        "tags": [ "Lessons" ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": ":CourseId",
+            "description": "the unique course _id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": ":LessonId",
+            "description": "the unique lesson _id",
+            "required": true,
+            "schema":{
+              "type": "string"
+            }
+          }
+        ],"responses": {
+          "200": {
+            "description": "lesson successfully update",
+            "content": {
+              "appication/json": {
+                "example": {
+                  "n": 1,
+                  "opTime": {
+                      "ts": "6794408434277023745",
+                      "t": 2
+                  },
+                  "electionId": "7fffffff0000000000000002",
+                  "ok": 1,
+                  "$clusterTime": {
+                      "clusterTime": "6794408434277023745",
+                      "signature": {
+                          "hash": "ZAw7d4dQYDIHWXnU2u61uO4zYug=",
+                          "keyId": "6791993889562558467"
+                      }
+                  },
+                  "operationTime": "6794408434277023745",
+                  "deletedCount": 1
+                }
+              }
+            }
+          },
+          "401":{
+            "description": "Unauthorized",
+            "content": {
+              "application/json":{
+                "example": {
+                  "error":"Access Denied"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": []
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "apiKey",
+        "name": "auth-token",
+        "in": "header",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "CourseSchema": {
+        "required": [
+          "user",
+          "title",
+          "description"
+        ],
+        "properties": {
+          "user": {
+            "type": "ObjectId"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "LessonSchema": {
+        "required": [
+          "user",
+          "course",
+          "title",
+          "description"
+        ],
+        "properties":{
+          "user": {
+            "type": "ObjectId"
+          },
+          "course": {
+            "type": "ObjectId"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "UserSchema": {
+        "required": [
+          "email",
+          "username",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type":"string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginUserSchema": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type":"string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "tags": []
+}

@@ -62,7 +62,7 @@ router.delete('/:courseId', verify, async function(req, res, next) {
 })
 
 //update course
-router.patch('/:courseId', verify, async function(req, res, next) {
+router.put('/:courseId', verify, async function(req, res, next) {
     try {
         const course = await Course.findOne({ _id: req.params.courseId })
 
