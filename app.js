@@ -34,8 +34,9 @@ app.use(function(err, req, res, next) {
 //express midlleware error handle
 
 // db connect
-mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true }, () =>
+mongoose.connect(process.env.DB_CONNECTION || 'mongodb://localhost/restapi', { useNewUrlParser: true, useUnifiedTopology: true }, () =>
   console.log('connected to mongoDB'),
 );
 
-app.listen(3000);
+const port = process.env.PORT || 3000;
+app.listen(port);
