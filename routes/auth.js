@@ -8,7 +8,7 @@ const { regValidation } = require('../services/validates');
 
 router.post('/register', async function(req, res, next) {
     const { error } = regValidation(req.body);
-    if(error) return res.status(400).json(error.details[0].message);
+    if(error) return res.status(422).json(error.details[0].message);
 
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(req.body.password, salt);
@@ -32,10 +32,10 @@ router.post('/register', async function(req, res, next) {
 router.post('/login', async function(req, res, next) {
     try{
         const user = await User.findOne({ email: req.body.email });
-        if (!user) return res.status(400).json('Email is not found');
+        if (!user) return res.status(403).json('Email is not found');
     
         const validPass = await bcrypt.compare( req.body.password, user.password );
-        if (!validPass) return res.status(400).json('Passord is wrong');
+        if (!validPass) return res.status(403).json('Passord is wrong');
     
         const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
     

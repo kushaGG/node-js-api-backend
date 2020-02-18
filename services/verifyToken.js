@@ -7,8 +7,11 @@ module.exports = async function(req, res, next) {
 
     try {
         const verified = jwt.verify(token, process.env.TOKEN_SECRET)
-        const findUser = await User.findOne({_id: verified._id})
-        req.user = findUser;
+
+        const foundUser = await User.findOne({_id: verified._id})
+        if (!foundUser) return res.status(404).json('User not found');
+
+        req.user = foundUser;
         next();
     }
     catch (err) {
