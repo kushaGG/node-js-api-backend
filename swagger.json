@@ -7,6 +7,9 @@
   },
   "servers": [
     {
+      "url": "https://gentle-cove-75304.herokuapp.com"
+    },
+    {
       "url": "http://0.0.0.0:3000"
     }
   ],

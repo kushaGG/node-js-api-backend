@@ -22,10 +22,9 @@ router.post('/register', async function(req, res, next) {
     try {
         const userSaved = await user.save();
         console.log(userSaved);
-        res.json(userSaved);
+        res.json({ _id: userSaved._id, email: userSaved.email, username: userSaved.username });
     }
     catch (err) {
-        // res.json({ message: err.message })
         next(err);
     }
 });
