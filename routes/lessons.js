@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Lesson = require('../models/Lesson');
 const Course = require('../models/Course');
-const verify = require('./verifyToken');
+const verify = require('../services/verifyToken');
 const querymen = require('querymen');
 
 router.get('/course/:courseId/lessons', querymen.middleware(), async function(req, res, next) {

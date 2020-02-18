@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/User');
-const { regValidation } = require('../validates');
+const { regValidation } = require('../services/validates');
 
 router.post('/register', async function(req, res, next) {
     const { error } = regValidation(req.body);
@@ -39,7 +39,7 @@ router.post('/login', async function(req, res, next) {
     
         const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
     
-        res.header('auth-token', token).json(token);
+        res.header('auth-token', token).json({ auth_token: token });
     }
     catch (err) {
         next(err);

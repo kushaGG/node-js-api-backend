@@ -458,6 +458,15 @@
         "tags": [ "Lessons" ],
         "parameters": [
           {
+            "in": "path",
+            "name": ":CourseId",
+            "description": "the unique course _id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "in": "query",
             "name": "page",
             "schema": {
