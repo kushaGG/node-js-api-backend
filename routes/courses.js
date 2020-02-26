@@ -9,7 +9,7 @@ const querymen = require('querymen');
 router.get('/', querymen.middleware(), async function(req, res, next) {
     try {
         var query = req.querymen;
-        const courses = await Course.find(query.query, query.select, query.cursor);
+        const courses = await Course.find(query.query, query.select, query.cursor).populate('user');
         return res.json(courses)
     }
     catch (err) {
@@ -36,7 +36,8 @@ router.post('/', verify, async function(req, res, next) {
 //show course by id
 router.get('/:courseId', async function(req, res, next) {
     try {
-        const course = await Course.findById(req.params.courseId);
+        const course = await (await Course.findById(req.params.courseId).populate(`user`));
+        console.log(course.user)
         res.json(course)
     }
     catch (err) {
