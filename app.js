@@ -16,7 +16,8 @@ app.use(bodyParser.json());
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, auth-token");
+  res.header ('Access-Control-Allow-Credentials', true)
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Custom-Header, auth-token");
   res.header("Access-Control-Expose-Headers", "auth-token")
   next();
 });
@@ -46,5 +47,5 @@ mongoose.connect(process.env.DB_CONNECTION || 'mongodb://localhost/restapi', { u
   console.log('connected to mongoDB'),
 );
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port);
