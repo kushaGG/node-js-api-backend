@@ -8,7 +8,7 @@ const querymen = require('querymen');
 router.get('/course/:courseId/lessons', querymen.middleware(), async function(req, res, next) {
     try {
         var query = req.querymen;
-        const lessons = await Lesson.find( query.query , query.select ,query.cursor).where({ course: { $eq: req.params.courseId } } ).populate('course')
+        const lessons = await Lesson.find( query.query , query.select ,query.cursor).where({ course: { $eq: req.params.courseId } } ).populate('course').populate('user')
         res.json(lessons)
     }
     catch (err) {
